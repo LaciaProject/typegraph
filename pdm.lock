@@ -20,7 +20,7 @@ files = [
 
 [[package]]
 name = "mapgraph"
-version = "0.1.2"
+version = "0.1.4"
 requires_python = ">=3.10"
 summary = "一个便捷实用的上下文管理工具"
 groups = ["default"]
@@ -30,8 +30,8 @@ dependencies = [
     "typing-inspect>=0.9.0",
 ]
 files = [
-    {file = "mapgraph-0.1.2-py3-none-any.whl", hash = "sha256:f5f4f664e2099cf35311b4435ee23940d46941af60768602bff2d30bdc8e6e95"},
-    {file = "mapgraph-0.1.2.tar.gz", hash = "sha256:0d00ec03e7a27a0bbd2b1d581c603344c7517e90f55f4c3f410f2afa30b04bd4"},
+    {file = "mapgraph-0.1.4-py3-none-any.whl", hash = "sha256:ffcc85f8e7dadbd9a99e49d67ddb4254da85eefed6e2bcc2280eb8b08c9dff6a"},
+    {file = "mapgraph-0.1.4.tar.gz", hash = "sha256:e5f5d3650cbb3e81bf5302af4143a0661a5eabd750faee06845c455efbc0c27b"},
 ]
 
 [[package]]
