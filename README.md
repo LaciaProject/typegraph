@@ -6,9 +6,9 @@ _**TypeGraph** is a Python library designed for type conversion between various 
 
 > 蓦然回首，那人却在灯火阑珊处
 
- [![CodeFactor](https://www.codefactor.io/repository/github/luxuncang/typegraph/badge)](https://www.codefactor.io/repository/github/luxuncang/typegraph)
- [![GitHub](https://img.shields.io/github/license/luxuncang/typegraph)](https://github.com/luxuncang/typegraph/blob/master/LICENSE)
- [![CodeQL](https://github.com/luxuncang/typegraph/workflows/CodeQL/badge.svg)](https://github.com/luxuncang/typegraph/blob/master/.github/workflows/codeql.yml)
+ [![CodeFactor](https://www.codefactor.io/repository/github/LaciaProject/typegraph/badge)](https://www.codefactor.io/repository/github/LaciaProject/typegraph)
+ [![GitHub](https://img.shields.io/github/license/LaciaProject/typegraph)](https://github.com/LaciaProject/typegraph/blob/master/LICENSE)
+ [![CodeQL](https://github.com/LaciaProject/typegraph/workflows/CodeQL/badge.svg)](https://github.com/LaciaProject/typegraph/blob/master/.github/workflows/codeql.yml)
 
 English | [简体中文](./README-zh.md)
 
