@@ -15,6 +15,7 @@ _**TypeGraph** 是一个 Python 库，用于在不同类型之间进行类型转
 </div>
 
 ## 功能
+
 - 注册同步和异步函数的类型转换器
 - 根据类型注解自动转换函数参数
 - 支持子类、联合类型和结构类型的转换
@@ -22,6 +23,7 @@ _**TypeGraph** 是一个 Python 库，用于在不同类型之间进行类型转
 - 使用 mermaid 语法可视化转换图
 
 ## 安装
+
 使用以下命令安装运行该库所需的依赖项：
 
 ```sh
@@ -37,6 +39,7 @@ pdm add typegraph3
 ## 入门指南
 
 ### 示例：同步转换器
+
 注册同步转换器并使用：
 
 ```python
@@ -53,6 +56,7 @@ print(result)
 ```
 
 ### 示例：异步转换器
+
 注册异步转换器并使用：
 
 ```python
@@ -171,7 +175,7 @@ Converting dict[str, str] to <class 'str'> using [<class 'dict'>, <class '__main
 ```
 
 ### 递归泛型计算
- 
+
 > 默认递归两次
 
 ```python
@@ -219,6 +223,7 @@ t.convert(5, P)
 ```bash
 5
 ```
+
 **dict[K,V]->dict[V,K]**
 
 ```python
@@ -266,6 +271,7 @@ node13["typing.Iterable[typing.Iterable[typing.Iterable[typing.Iterable[typing.A
 ```
 
 ### 自动转换装饰器
+
 根据类型注解自动转换函数参数：
 
 #### 同步
@@ -319,6 +325,7 @@ pdm test
 ```
 
 测试覆盖了：
+
 - 同步转换器的注册与执行。
 - 异步转换器的注册与执行。
 - 转换能力检查。
@@ -352,7 +359,6 @@ async def float_to_str(input_value):
 t.show_mermaid_graph()
 ```
 
-
 ```mermaid
 graph TD;
 float-->Test
@@ -369,15 +375,19 @@ Test-->float
 - [X] 注解类型 (Annotated type) `Pydantic Annotated[T, Feild(...)]`
 - [X] 结构类型 (Structural type)
 - [X] 协议类型 (Protocol type)
+- [X] 泛型协议类型 (Generic Protocol type)
 - [X] 字典类型 (TypedDict type)
 - [X] 泛型类型 (Generic type)
 - [X] 数据类 (Dataclass/BaseModel)
 
 ## 许可
+
 此项目使用 MIT 许可证。
 
 ## 贡献
+
 欢迎贡献！请提出 issue 或提交 pull request 来进行更改。
 
 ## 联系方式
+
 如果您有任何问题或疑问，请在此仓库中提出 issue。

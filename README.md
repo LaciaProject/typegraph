@@ -368,6 +368,7 @@ The graph will be displayed using mermaid syntax, which can be rendered online o
 - [X] Annotated type `Pydantic Annotated[T, Feild(...)]`
 - [X] Structural type
 - [X] Protocol type
+- [X] Generic Protocol type
 - [X] TypedDict type
 - [X] Generic type
 - [X] Dataclass (Dataclass/BaseModel)

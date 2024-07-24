@@ -26,26 +26,24 @@ from typing import (
 from functools import wraps, reduce
 
 import networkx as nx
-from pydantic import BaseModel
 from typing_extensions import get_args, get_origin
 from typing_inspect import is_union_type, get_generic_type
 from typeguard import check_type, CollectionCheckStrategy
-
-from .typevar import (
+from mapgraph.typevar import (
     iter_deep_type,
     gen_typevar_model,
     extract_typevar_mapping,
     check_typevar_model,
 )
-from ..type_utils import (
+from mapgraph.type_utils import (
     is_structural_type,
     deep_type,
     is_protocol_type,
     check_protocol_type,
-    get_subclass_types,
-    get_connected_subgraph,
     like_isinstance,
 )
+
+from ..type_utils import get_subclass_types, get_connected_subgraph
 
 
 T = TypeVar("T")
@@ -768,7 +766,9 @@ class PdtConverter:
             except nx.NetworkXNoPath:
                 ...
 
-    def convert(self, input_value, out_type: Type[Out], debug: bool = False, depth: int = 3) -> Out:
+    def convert(
+        self, input_value, out_type: Type[Out], debug: bool = False, depth: int = 3
+    ) -> Out:
         input_type = deep_type(input_value)
         for source, target in self.iter_all_paths(input_value, out_type, depth=depth):
             for path, func in self.get_converter(source, target):
@@ -992,7 +992,6 @@ class PdtConverter:
         yield from self.iter_all_paths(in_value, out_type, depth - 1)
 
     def iter_generic_paths(self, in_value, out_type: Type[Out], depth: int = 3):
-        
         if depth == 0:
             return
 
@@ -1004,11 +1003,12 @@ class PdtConverter:
                 try:
                     mapping = extract_typevar_mapping(t, i)
                     if mapping:
-                        new_in, new_out = um.get_instance(mapping), vm.get_instance(mapping)
-                        self.qG.add_edge(
-                            new_in, new_out, **c
+                        new_in, new_out = (
+                            um.get_instance(mapping),
+                            vm.get_instance(mapping),
                         )
-                        self.iter_generic_paths(in_value, new_in, depth - 1) # type: ignore
+                        self.qG.add_edge(new_in, new_out, **c)
+                        self.iter_generic_paths(in_value, new_in, depth - 1)  # type: ignore
                 except Exception:
                     ...
 
@@ -1018,7 +1018,7 @@ class PdtConverter:
         for node in self.get_graph().nodes():
             if self.like_isinstance(in_value, node):
                 source.add(node)
-            if self.like_issubclass(out_type, node):
+            if self.like_issubclass(node, out_type):
                 target.add(node)
             if self.like_issubclass(in_type, node):
                 source.add(node)
