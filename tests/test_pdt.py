@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import unittest
 import asyncio
-from typing import TypeVar, Generic
-
-from typegraph.converter.base import TypeConverter, PdtConverter
+from typing import TypeVar, Generic, Callable
+from typing_extensions import TypedDict
+from typegraph.converter.base import PdtConverter
 
 K = TypeVar("K")
 V = TypeVar("V")
@@ -85,7 +85,7 @@ class PdtConverterTests(unittest.TestCase):
         self.assertEqual(result, 10)
 
         # Test Union Type
-        result = self.converter.convert(10, float | str)
+        result = self.converter.convert(10, list | str)
         self.assertEqual(result, "10")
 
         # Test Subclass
@@ -97,7 +97,7 @@ class PdtConverterTests(unittest.TestCase):
         self.assertEqual(result, ["10"])
 
         # Test Nest Structural
-        result = self.converter.convert([[10, "10"]], list[list[float | str]])
+        result = self.converter.convert([[10, "10"]], list[list[Callable | str]])
         self.assertEqual(result, [["10", "10"]])
 
         # Test Dict Structural
@@ -106,7 +106,7 @@ class PdtConverterTests(unittest.TestCase):
 
         # Test Nest Dict Structural
         result = self.converter.convert(
-            [[{"1": 1}]], list[list[dict[int, float | str]]]
+            [[{"1": 1}]], list[list[dict[int, Callable | str]]]
         )
         self.assertEqual(result, [[{1: "1"}]])
 
@@ -162,7 +162,7 @@ class PdtConverterTests(unittest.TestCase):
             self.assertEqual(result, 10)
 
             # Test Union Type
-            result = await self.converter.async_convert(10, float | str)
+            result = await self.converter.async_convert(10, list | str)
             self.assertEqual(result, "10")
 
             # Test Subclass
@@ -175,7 +175,7 @@ class PdtConverterTests(unittest.TestCase):
 
             # Test Nest Structural
             result = await self.converter.async_convert(
-                [[10, "10"]], list[list[float | str]]
+                [[10, "10"]], list[list[list | str]]
             )
             self.assertEqual(result, [["10", "10"]])
 
@@ -185,7 +185,7 @@ class PdtConverterTests(unittest.TestCase):
 
             # Test Nest Dict Structural
             result = await self.converter.async_convert(
-                [[{"1": 1}]], list[list[dict[int, float | str]]]
+                [[{"1": 1}]], list[list[dict[int, Callable | str]]]
             )
             self.assertEqual(result, [[{1: "1"}]])
 
@@ -577,6 +577,14 @@ class PdtConverterTests(unittest.TestCase):
             self.assertIsInstance(result, B)
 
         asyncio.run(test_async_auto_convert_generic())
+
+    def test_obj_subclass_outside_converter(self):
+        class Test(TypedDict):
+            name: str
+            age: int
+
+        obj = {"name": "John", "age": 20, "extra": "extra"}
+        self.assertEqual(self.converter.convert(obj, Test), obj)
 
 
 if __name__ == "__main__":

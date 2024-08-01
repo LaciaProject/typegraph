@@ -1,5 +1,4 @@
 from .converter import (
-    TypeConverter,
     PdtConverter,
 )
 
