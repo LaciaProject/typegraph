@@ -18,15 +18,15 @@ from functools import wraps, reduce
 
 import networkx as nx
 from typing_extensions import get_args, get_origin
-from mapgraph.typevar import (
-    gen_typevar_model,
-    extract_typevar_mapping,
-    check_typevar_model,
-)
-from mapgraph.type_utils import (
-    is_structural_type,
-    deep_type,
+from typing_tool import (
     like_isinstance,
+    like_issubclass,
+    extract_typevar_mapping,
+    gen_typevar_model
+)
+from typing_tool.type_utils import (
+    deep_type,
+    is_structural_type
 )
 
 from ..type_utils import get_connected_subgraph
@@ -447,7 +447,7 @@ class PdtConverter:
                 self.sG.add_edge(source, target, line=False, converter=lambda x: x)
 
     def like_issubclass(self, obj, cls: Type):
-        return check_typevar_model(obj, cls)
+        return like_issubclass(obj, cls)
 
     def like_isinstance(self, obj, cls: Type):
         return like_isinstance(obj, cls)
