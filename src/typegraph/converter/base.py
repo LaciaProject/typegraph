@@ -13,6 +13,7 @@ from typing import (
     Optional,
     Mapping,
     get_type_hints,
+    Literal,
 )
 from functools import wraps, reduce
 
@@ -22,14 +23,11 @@ from typing_tool import (
     like_isinstance,
     like_issubclass,
     extract_typevar_mapping,
-    gen_typevar_model
+    gen_typevar_model,
 )
-from typing_tool.type_utils import (
-    deep_type,
-    is_structural_type
-)
+from typing_tool.type_utils import deep_type, is_structural_type
 
-from ..type_utils import get_connected_subgraph
+from ..type_utils import get_connected_subgraph, show_mermaid_graph
 
 
 T = TypeVar("T")
@@ -357,39 +355,10 @@ class PdtConverter:
 
         return decorator
 
-    def show_mermaid_graph(self, graph: Optional[nx.DiGraph] = None):
-        from IPython.display import display, Markdown
-        import typing
-
-        nodes = []
-
-        def get_name(cls):
-            if get_origin(cls) in (typing.Annotated,):
-                return str(cls)
-            if type(cls) in (typing._GenericAlias, typing.GenericAlias):  # type: ignore
-                return str(cls)
-            elif hasattr(cls, "__name__"):
-                return cls.__name__
-            return str(cls)
-
-        def get_node_name(cls):
-            return f"node{nodes.index(cls)}"
-
-        text = "```mermaid\ngraph TD;\n"
-        for edge in (
-            self.get_graph().edges(data=True)
-            if graph is None
-            else graph.edges(data=True)
-        ):
-            if edge[0] not in nodes:
-                nodes.append(edge[0])
-            if edge[1] not in nodes:
-                nodes.append(edge[1])
-            line_style = "--" if edge[2].get("line", False) else "-.-"
-            text += f'{get_node_name(edge[0])}["{get_name(edge[0])}"] {line_style}> {get_node_name(edge[1])}["{get_name(edge[1])}"]\n'
-        text += "```"
-        print(text)
-        display(Markdown(text))
+    def show_mermaid_graph(
+        self, env: Literal["jupyter", "markdown", "marimo"] = "jupyter"
+    ):
+        return show_mermaid_graph(self.get_graph(), env)
 
     def iter_all_paths(self, in_value, out_type: Type[Out], depth: int = 3):
         if depth == 0:

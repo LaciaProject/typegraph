@@ -1,6 +1,6 @@
 [project]
 name = "typegraph3"
-version = "0.3.0"
+version = "0.3.1"
 description = "基于graph的类型转换工具"
 authors = [
     {name = "luxuncang", email = "luxuncang@qq.com"},
