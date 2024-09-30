@@ -14,6 +14,7 @@ from typing import (
     Mapping,
     get_type_hints,
     Literal,
+    Generic,
 )
 from functools import wraps, reduce
 
@@ -36,7 +37,12 @@ Out = TypeVar("Out")
 P = ParamSpec("P")
 
 
-class PdtConverter:
+class Converter:
+    G: nx.DiGraph
+    sG: nx.DiGraph
+    tG: nx.DiGraph
+    qG: nx.DiGraph
+
     def __init__(self):
         self.G = nx.DiGraph()
         self.sG = nx.DiGraph()
@@ -45,37 +51,6 @@ class PdtConverter:
 
     def get_graph(self, graphs: Optional[list[nx.DiGraph]] = None):
         return nx.all.compose_all([self.G, self.sG, self.qG] + (graphs or []))
-
-    def _gen_graph(self, in_type: Type[In], out_type: Type[Out], deep: int = 2):
-        tmp_G = nx.DiGraph()
-        if deep == 0:
-            return tmp_G
-
-        im = gen_typevar_model(in_type)
-        om = gen_typevar_model(out_type)
-
-        def _gen_sub_graph(mapping, node):
-            for su, sv, sc in get_connected_subgraph(self.tG, node).edges(data=True):
-                tmp_G.add_edge(su.get_instance(mapping), sv.get_instance(mapping), **sc)
-
-        for u, v, c in self.tG.edges(data=True):
-            um = gen_typevar_model(u)
-            vm = gen_typevar_model(v)
-            combos = [(um, im), (vm, im), (um, om), (vm, om)]
-            for t, i in combos:
-                try:
-                    mapping = extract_typevar_mapping(t, i)
-                    tmp_G.add_edge(
-                        um.get_instance(mapping), vm.get_instance(mapping), **c
-                    )
-                    _gen_sub_graph(mapping, t)
-                except Exception:
-                    ...
-        for u, v, c in tmp_G.edges(data=True):
-            tmp_G = nx.compose(tmp_G, self._gen_graph(u, v, deep - 1))
-
-        self.qG = nx.compose(self.qG, tmp_G)
-        return tmp_G
 
     def _gen_edge(
         self, in_type: Type[In], out_type: Type[Out], converter: Callable[P, Out]
@@ -120,6 +95,52 @@ class PdtConverter:
             return func
 
         return decorator
+
+    def like_issubclass(self, obj, cls: Type):
+        return like_issubclass(obj, cls)
+
+    def like_isinstance(self, obj, cls: Type):
+        return like_isinstance(obj, cls)
+
+
+class PdtConverter(Converter):
+    
+    def add_converter(self, converter: Converter):
+        for u, v, c in converter.G.edges(data=True):
+            self._gen_edge(u, v, c["converter"])
+        for u, v, c in converter.tG.edges(data=True):
+            self.tG.add_edge(u, v, **c)
+
+    def _gen_graph(self, in_type: Type[In], out_type: Type[Out], deep: int = 2):
+        tmp_G = nx.DiGraph()
+        if deep == 0:
+            return tmp_G
+
+        im = gen_typevar_model(in_type)
+        om = gen_typevar_model(out_type)
+
+        def _gen_sub_graph(mapping, node):
+            for su, sv, sc in get_connected_subgraph(self.tG, node).edges(data=True):
+                tmp_G.add_edge(su.get_instance(mapping), sv.get_instance(mapping), **sc)
+
+        for u, v, c in self.tG.edges(data=True):
+            um = gen_typevar_model(u)
+            vm = gen_typevar_model(v)
+            combos = [(um, im), (vm, im), (um, om), (vm, om)]
+            for t, i in combos:
+                try:
+                    mapping = extract_typevar_mapping(t, i)
+                    tmp_G.add_edge(
+                        um.get_instance(mapping), vm.get_instance(mapping), **c
+                    )
+                    _gen_sub_graph(mapping, t)
+                except Exception:
+                    ...
+        for u, v, c in tmp_G.edges(data=True):
+            tmp_G = nx.compose(tmp_G, self._gen_graph(u, v, deep - 1))
+
+        self.qG = nx.compose(self.qG, tmp_G)
+        return tmp_G
 
     def can_convert(self, in_type: Type[In], out_type: Type[Out]) -> bool:
         try:
@@ -414,9 +435,3 @@ class PdtConverter:
         for source, target in itertools.combinations(nodes, 2):
             if self.like_issubclass(source, target):
                 self.sG.add_edge(source, target, line=False, converter=lambda x: x)
-
-    def like_issubclass(self, obj, cls: Type):
-        return like_issubclass(obj, cls)
-
-    def like_isinstance(self, obj, cls: Type):
-        return like_isinstance(obj, cls)

@@ -1,1 +1,1 @@
-from .base import PdtConverter
+from .base import PdtConverter, Converter

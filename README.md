@@ -310,6 +310,21 @@ async def test_async():
 asyncio.run(test_async())
 ```
 
+#### Multiple Converters
+
+```python
+from typegraph import PdtConverter, Converter
+import asyncio
+
+pdt = PdtConverter()
+converter = Converter()
+
+pdt.register_converter(int, str)(str)
+converter.register_converter(str, int)(int)
+
+pdt.add_converter(converter)
+```
+
 ## Testing
 
 Unit tests are provided to ensure the library functions correctly. Run the tests:

@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import unittest
 import asyncio
-from typing import TypeVar, Generic, Callable
+from typing import TypeVar, Generic, Callable, Sequence
 from typing_extensions import TypedDict
-from typegraph.converter.base import PdtConverter
+from typegraph.converter.base import PdtConverter, Converter
 
 K = TypeVar("K")
 V = TypeVar("V")
@@ -109,6 +109,47 @@ class PdtConverterTests(unittest.TestCase):
             [[{"1": 1}]], list[list[dict[int, Callable | str]]]
         )
         self.assertEqual(result, [[{1: "1"}]])
+
+    def test_combined_converters(self):
+        t = PdtConverter()
+        c = Converter()
+        c1 = Converter()
+
+        def convert_A_T(x):
+            return x
+
+        c.register_converter(int, str)(str)
+        c1.register_converter(int, str)(convert_A_T)
+
+        t.add_converter(c)
+        t.add_converter(c1)
+
+        result = t.convert((1, 2, 3), Sequence[str])
+        self.assertEqual(result, (1, 2, 3))
+
+        result = t.convert(10, str)
+        self.assertEqual(result, 10)
+
+        result = t.convert(10, str)
+        self.assertEqual(result, 10)
+
+    def test_async_combined_converters(self):
+        t = PdtConverter()
+        c = Converter()
+        c1 = Converter()
+
+        c.register_converter(int, str)(str)
+
+        t.add_converter(c)
+
+        async def test_async_conversion():
+            result = await t.async_convert((1, 2, 3), Sequence[str])
+            self.assertEqual(result, ("1", "2", "3"))
+
+            result = await t.async_convert(10, str)
+            self.assertEqual(result, "10")
+
+        asyncio.run(test_async_conversion())
 
     def test_async_get_converter(self):
         class Test(int): ...

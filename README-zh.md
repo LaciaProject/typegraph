@@ -316,6 +316,21 @@ async def test_async():
 asyncio.run(test_async())
 ```
 
+#### 组合
+
+```python
+from typegraph import PdtConverter, Converter
+import asyncio
+
+pdt = PdtConverter()
+converter = Converter()
+
+pdt.register_converter(int, str)(str)
+converter.register_converter(str, int)(int)
+
+pdt.add_converter(converter)
+```
+
 ## 测试
 
 提供了单元测试，以确保库的正确功能。运行测试：
@@ -361,9 +376,8 @@ t.show_mermaid_graph()
 
 ```mermaid
 graph TD;
-float-->Test
-float-->str
-Test-->float
+    node0["int"] --> node1["str"]
+    node1["str"] --> node0["int"]
 ```
 
 图将使用 mermaid 语法显示，您可以在线渲染或在支持的环境中（如 Jupyter Notebooks）进行渲染。

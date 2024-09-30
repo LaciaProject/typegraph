@@ -59,7 +59,7 @@ def show_mermaid_graph(
     elif env == "marimo":
         import marimo as mo
 
-        mo.mermaid(mermaid)
+        return mo.mermaid(mermaid)
 
 
 def mermaid_graph(graph: nx.DiGraph):

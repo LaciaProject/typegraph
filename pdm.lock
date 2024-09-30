@@ -160,7 +160,7 @@ files = [
 
 [[package]]
 name = "typing-tool"
-version = "0.1.0"
+version = "0.1.2"
 requires_python = ">=3.10"
 summary = "python typing tool"
 groups = ["default"]
@@ -170,6 +170,6 @@ dependencies = [
     "typing-inspect>=0.9.0",
 ]
 files = [
-    {file = "typing_tool-0.1.0-py3-none-any.whl", hash = "sha256:704dc3c025261ba2f383f8180f1b02e4b9c7e7099b90323102eb4f5f979e96dd"},
-    {file = "typing_tool-0.1.0.tar.gz", hash = "sha256:8f95107fcf61c0d19fbfc35418a1e1c3ecd78c929d34f6382a9fb26b3ec8ccda"},
+    {file = "typing_tool-0.1.2-py3-none-any.whl", hash = "sha256:39375142aaed54e71e597fa4a93323ff42586d8567b4e52c5e75f815a04be262"},
+    {file = "typing_tool-0.1.2.tar.gz", hash = "sha256:9a1e16b523e0c7cb7ce4545ead7c3fe4f528518c36c8d79bd0df5afd18f927c6"},
 ]
